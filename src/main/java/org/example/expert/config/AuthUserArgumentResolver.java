@@ -36,9 +36,9 @@ public class AuthUserArgumentResolver implements HandlerMethodArgumentResolver {
     ) {
         HttpServletRequest request = (HttpServletRequest) webRequest.getNativeRequest();
 
-        // JwtFilter 에서 set 한 userId, nickName, email, userRole 값을 가져옴
+        // JwtFilter 에서 set 한 userId, nickname, email, userRole 값을 가져옴
         Long userId = (Long) request.getAttribute("userId");
-        String nickName = (String) request.getAttribute("nickName");
+        String nickName = (String) request.getAttribute("nickname");
         String email = (String) request.getAttribute("email");
         UserRole userRole = UserRole.of((String) request.getAttribute("userRole"));
 

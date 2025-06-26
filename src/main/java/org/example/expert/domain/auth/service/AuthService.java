@@ -36,7 +36,7 @@ public class AuthService {
         UserRole userRole = UserRole.of(signupRequest.getUserRole());
 
         User newUser = new User(
-                signupRequest.getNickName(),
+                signupRequest.getNickname(),
                 signupRequest.getEmail(),
                 encodedPassword,
                 userRole
