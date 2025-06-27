@@ -11,14 +11,22 @@ import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.example.expert.domain.user.enums.UserRole;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.stereotype.Component;
 
 import java.io.IOException;
+import java.util.List;
 
 @Slf4j
 @RequiredArgsConstructor
+@Component
 public class JwtFilter implements Filter {
 
     private final JwtUtil jwtUtil;
+    private final CustomUserDetailsService customUserDetailsService;
 
     @Override
     public void init(FilterConfig filterConfig) throws ServletException {
@@ -61,6 +69,17 @@ public class JwtFilter implements Filter {
             httpRequest.setAttribute("nickname", claims.get("nickname"));
             httpRequest.setAttribute("email", claims.get("email"));
             httpRequest.setAttribute("userRole", claims.get("userRole"));
+
+            // 토큰에서 userId 추출
+            Long userId = jwtUtil.extractUserId(jwt);
+
+            // 권한 정보를 SimpleGrantedAuthority 리스트로 생성
+            List<SimpleGrantedAuthority> authorities = List.of(new SimpleGrantedAuthority(userRole.getRole()));
+
+            // SecurityContextHolder 에 인증 객체를 저장하여 현재 요청의 인증 상태를 설정
+            UserDetails userDetails = customUserDetailsService.loadUserByUsername(userId.toString());
+            UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(userDetails, null, authorities);
+            SecurityContextHolder.getContext().setAuthentication(authentication);
 
             if (url.startsWith("/admin")) {
                 // 관리자 권한이 없는 경우 403을 반환합니다.
