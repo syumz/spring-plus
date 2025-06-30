@@ -28,6 +28,7 @@ public class ManagerService {
     private final ManagerRepository managerRepository;
     private final UserRepository userRepository;
     private final TodoRepository todoRepository;
+    private final LogService logService;
 
     @Transactional
     public ManagerSaveResponse saveManager(CustomUserDetails authUser, long todoId, ManagerSaveRequest managerSaveRequest) {
@@ -49,6 +50,9 @@ public class ManagerService {
 
         Manager newManagerUser = new Manager(managerUser, todo);
         Manager savedManagerUser = managerRepository.save(newManagerUser);
+
+        // 로그에 저장
+        logService.saveRequestLog(user.getId(), todoId);
 
         return new ManagerSaveResponse(
                 savedManagerUser.getId(),
