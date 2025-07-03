@@ -26,7 +26,7 @@ public class SecurityConfig{
                 .formLogin(AbstractHttpConfigurer::disable) // UsernamePasswordAuthenticationFilter, DefaultLoginPageGeneratingFilter 비활성화
                 .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class)// JWT 인증 필터를 UsernamePasswordAuthenticationFilter 이전에 등록
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/auth/**").permitAll()
+                        .requestMatchers("/auth/**", "/actuator/health").permitAll()
                         .requestMatchers("/admin/**").hasRole("ADMIN")
                         .requestMatchers("/todos/**", "/users/**").hasAnyRole("USER", "ADMIN")
                         .anyRequest().authenticated()
